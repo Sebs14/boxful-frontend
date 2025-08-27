@@ -22,7 +22,7 @@ const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
           <input
             ref={ref}
             type='date'
-            className={`p-3 bg-white border-2 font-mona-sans rounded-lg shadow-sm w-full transition-colors outline-none focus:outline-none focus:ring-0 cursor-pointer ${
+            className={`p-3 bg-white border font-mona-sans rounded-lg shadow-sm w-full transition-colors outline-none focus:outline-none focus:ring-0 cursor-pointer ${
               error
                 ? 'border-red-500 focus:border-red-500'
                 : 'border-[#EDEDED] focus:border-[#EDEDED]'

@@ -22,7 +22,11 @@ interface RegisterFormData {
   confirmPassword: string;
 }
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  onShowLogin: () => void;
+}
+
+export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
   const [countryCode, setCountryCode] = useState('+503');
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,14 +74,12 @@ export default function RegisterForm() {
   const fullPhoneNumber = `${countryCode} ${phoneNumber || '7777 7777'}`;
 
   const handleGoBack = () => {
-    // Aquí puedes agregar la lógica para ir atrás
-    console.log('Ir atrás');
-    // Por ejemplo: router.back() o navegar a una ruta específica
+    onShowLogin();
   };
 
   if (!mounted) {
     return (
-      <div className='flex flex-col justify-center items-start w-1/2 p-8 h-screen gap-11'>
+      <div className='flex flex-col justify-center items-start w-full p-8 h-screen gap-11'>
         <div className='flex flex-col items-center gap-3 justify-center sm:items-start'>
           <div className='flex items-center gap-3 w-full'>
             <div className='w-6 h-6 bg-gray-200 rounded animate-pulse' />
@@ -110,12 +112,12 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className='flex flex-col justify-center items-start w-1/2 p-8 h-screen gap-11'>
+    <div className='flex flex-col justify-center items-start w-full p-8 h-screen gap-11'>
       <div className='flex flex-col items-center gap-3 justify-center sm:items-start'>
         <div className='flex items-center gap-3 w-full'>
           <ChevronLeftIcon
             size={24}
-            className='text-[#4E4C4C]'
+            className='text-[#4E4C4C] cursor-pointer hover:text-[#2E49CE] transition-colors'
             onClick={handleGoBack}
           />
           <h1 className='text-2xl font-bold font-mona-sans text-[#16163D]'>
@@ -282,7 +284,7 @@ export default function RegisterForm() {
             borderRadius: '8px',
             height: '40px',
             fontWeight: '500',
-          }
+          },
         }}
         cancelButtonProps={{
           style: {
@@ -291,7 +293,7 @@ export default function RegisterForm() {
             fontWeight: '500',
             color: '#6B7280',
             borderColor: '#D1D5DB',
-          }
+          },
         }}
       >
         <div className='flex flex-col items-center text-center py-6'>
@@ -301,16 +303,18 @@ export default function RegisterForm() {
               <span className='text-white font-bold text-lg'>!</span>
             </div>
           </div>
-          
+
           {/* Título */}
           <h2 className='text-xl text-gray-900 mb-4 font-mona-sans'>
             Confirmar número <span className='font-bold'>de teléfono</span>
           </h2>
-          
+
           {/* Mensaje */}
           <p className='text-gray-600 text-base mb-6 font-mona-sans'>
             Está seguro de que desea continuar con el número{' '}
-            <span className='font-semibold text-gray-900'>{fullPhoneNumber}?</span>
+            <span className='font-semibold text-gray-900'>
+              {fullPhoneNumber}?
+            </span>
           </p>
         </div>
       </Modal>

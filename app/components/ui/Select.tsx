@@ -2,6 +2,7 @@
 
 import { forwardRef, useState } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
+import { motion } from 'framer-motion';
 
 interface SelectOption {
   value: string;
@@ -58,7 +59,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             onMouseDown={handleMouseDown}
             onBlur={handleBlur}
             onChange={handleChange}
-            className={`p-3 bg-white border-2 font-mona-sans rounded-lg shadow-sm w-full transition-colors outline-none focus:outline-none focus:ring-0 appearance-none cursor-pointer ${
+            className={`p-3 bg-white border font-mona-sans rounded-lg shadow-sm w-full transition-colors outline-none focus:outline-none focus:ring-0 appearance-none cursor-pointer ${
               error
                 ? 'border-red-500 focus:border-red-500'
                 : 'border-[#EDEDED] focus:border-[#EDEDED]'
@@ -77,12 +78,23 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ))}
           </select>
           <div className='absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none'>
-            <IoChevronDown
-              size={20}
-              className={`transition-all duration-200 ease-in-out ${
-                isOpen ? 'rotate-180' : 'rotate-0'
-              } ${error ? 'text-red-500' : 'text-[#4E4C4C]'}`}
-            />
+            <motion.div
+              animate={{
+                rotate: isOpen ? 180 : 0,
+                scale: isOpen ? 1.1 : 1,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 20,
+                duration: 0.3,
+              }}
+            >
+              <IoChevronDown
+                size={20}
+                className={`${error ? 'text-red-500' : 'text-[#4E4C4C]'}`}
+              />
+            </motion.div>
           </div>
         </div>
         {error && (

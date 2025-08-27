@@ -9,7 +9,11 @@ interface LoginFormData {
   password: string;
 }
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onShowRegister: () => void;
+}
+
+export default function LoginForm({ onShowRegister }: LoginFormProps) {
   const {
     register,
     handleSubmit,
@@ -27,7 +31,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className='flex flex-col justify-center items-start w-1/2 p-8 h-screen gap-11'>
+    <div className='flex flex-col justify-center items-start w-full p-8 h-screen gap-11'>
       <div className='flex flex-col items-center gap-3 justify-center sm:items-start'>
         <h1 className='text-2xl font-bold font-mona-sans text-[#16163D]'>
           Bienvenido
@@ -77,12 +81,13 @@ export default function LoginForm() {
       <div className='flex items-center justify-center w-full'>
         <p className='font-mona-sans'>
           ¿Necesitas una cuenta?{' '}
-          <a
-            href='#'
-            className='font-mona-sans font-semibold text-[#4E4C4C] hover:text-[#2E49CE] transition-colors'
+          <button
+            type='button'
+            onClick={onShowRegister}
+            className='font-mona-sans font-semibold text-[#4E4C4C] hover:text-[#2E49CE] transition-colors cursor-pointer'
           >
             Regístrate aquí
-          </a>
+          </button>
         </p>
       </div>
     </div>

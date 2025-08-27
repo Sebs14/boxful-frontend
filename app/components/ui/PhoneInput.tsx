@@ -81,7 +81,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
             </label>
           )}
           <div className='relative w-full'>
-            <div className='p-3 bg-white border-2 font-mona-sans rounded-lg shadow-sm border-[#EDEDED] h-[50px]' />
+            <div className='p-3 bg-white border font-mona-sans rounded-lg shadow-sm border-[#EDEDED] h-[50px]' />
           </div>
         </div>
       );
@@ -97,7 +97,7 @@ const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
         <div className='relative w-full'>
           {/* Container integrado */}
           <div
-            className={`flex w-full border-2 font-mona-sans rounded-lg shadow-sm transition-colors overflow-hidden ${
+            className={`flex w-full border font-mona-sans rounded-lg shadow-sm transition-colors overflow-hidden ${
               error
                 ? 'border-red-500'
                 : 'border-[#EDEDED] focus-within:border-[#EDEDED]'
