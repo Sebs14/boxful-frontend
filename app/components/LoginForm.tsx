@@ -1,7 +1,8 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { Input, Button } from './ui';
+import Input from './ui/Input';
+import Button from './ui/Button';
 
 interface LoginFormData {
   email: string;
