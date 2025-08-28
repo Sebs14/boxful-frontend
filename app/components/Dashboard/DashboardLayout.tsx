@@ -3,21 +3,38 @@
 import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { useUserPreferencesStore } from '../../stores';
+import { useClientOnly } from '../../hooks/useClientOnly';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   title: string;
+  onLogout?: () => void;
 }
 
 export default function DashboardLayout({
   children,
   title,
+  onLogout,
 }: DashboardLayoutProps) {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const hasMounted = useClientOnly();
+  
+  // Usar el store de preferencias del usuario
+  const {
+    isSidebarCollapsed,
+    activeTab,
+    toggleSidebar,
+    setActiveTab,
+  } = useUserPreferencesStore();
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
+  // Mostrar un fallback hasta que se monte en el cliente
+  if (!hasMounted) {
+    return (
+      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+        <div className='text-gray-500'>Cargando...</div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gray-50'>
@@ -26,6 +43,9 @@ export default function DashboardLayout({
         <Sidebar
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={toggleSidebar}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onLogout={onLogout}
         />
       </div>
 

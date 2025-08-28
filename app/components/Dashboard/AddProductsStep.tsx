@@ -305,13 +305,9 @@ export default function AddProductsStep({
 
                   {/* Weight Display */}
                   <div className='col-span-2'>
-                    <div className='relative'>
-                      <div className='p-3 bg-white border border-[#EDEDED] rounded-lg shadow-sm text-center font-mona-sans'>
-                        {product.weight}
-                      </div>
-                      <span className='absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 font-mona-sans'>
-                        libras
-                      </span>
+                    <div className='p-3 bg-white border border-[#EDEDED] rounded-lg shadow-sm font-mona-sans flex items-center justify-center gap-1'>
+                      <span className='font-medium'>{product.weight}</span>
+                      <span className='text-sm text-gray-500'>libras</span>
                     </div>
                   </div>
 
