@@ -12,7 +12,15 @@ export const apiConfig = {
 export const handleApiResponse = async (response: Response) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    console.error('API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      error: errorData,
+    });
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
   }
   return response.json();
 };
@@ -24,6 +32,12 @@ export const apiRequest = async (
 ): Promise<any> => {
   const url = `${apiConfig.baseURL}${endpoint}`;
 
+  console.log('🌐 API Request:', {
+    url,
+    method: options.method || 'GET',
+    headers: options.headers,
+  });
+
   const config: RequestInit = {
     headers: {
       ...apiConfig.headers,
@@ -32,6 +46,26 @@ export const apiRequest = async (
     ...options,
   };
 
-  const response = await fetch(url, config);
-  return handleApiResponse(response);
+  try {
+    const response = await fetch(url, config);
+    console.log('✅ API Response:', {
+      url,
+      status: response.status,
+      ok: response.ok,
+    });
+    return handleApiResponse(response);
+  } catch (error) {
+    console.error('❌ API Request Failed:', {
+      url,
+      error: error instanceof Error ? error.message : error,
+    });
+    throw error;
+  }
+};
+
+// Test CORS function
+export const testCors = async (): Promise<any> => {
+  return apiRequest('/test-cors', {
+    method: 'GET',
+  });
 };

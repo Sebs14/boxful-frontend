@@ -71,4 +71,4 @@ export const GENDER_OPTIONS = [
   { value: 'Prefiero no decir', label: 'Prefiero no decir' },
 ] as const;
 
-export type GenderOption = typeof GENDER_OPTIONS[number]['value'];
+export type GenderOption = (typeof GENDER_OPTIONS)[number]['value'];

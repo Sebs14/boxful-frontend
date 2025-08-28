@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  ReactNode,
+} from 'react';
 import { authAPI, tokenUtils } from '../utils/auth';
 import type { UserProfile, RegisterData } from '../utils/types';
 
@@ -107,9 +113,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     getProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

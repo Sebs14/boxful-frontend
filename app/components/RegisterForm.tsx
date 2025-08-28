@@ -3,13 +3,14 @@
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { Modal } from 'antd';
+import { useRouter } from 'next/navigation';
 import Input from './ui/Input';
 import Button from './ui/Button';
 import Select from './ui/Select';
 import DatePicker from './ui/DatePicker';
 import PhoneInput from './ui/PhoneInput';
 import { ChevronLeftIcon } from './ui/Icons';
-import { useAuth } from '../../utils/auth-context';
+import { useAuthStore } from '../stores/authStore';
 import type { RegisterFormData } from '../../utils/types';
 import { GENDER_OPTIONS } from '../../utils/types';
 
@@ -21,8 +22,10 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
   const [countryCode, setCountryCode] = useState('+503');
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [preparedData, setPreparedData] = useState<any>(null);
   const [error, setError] = useState<string>('');
-  const { register: registerUser, isLoading } = useAuth();
+  const router = useRouter();
+  const { register: registerUser, isLoading } = useAuthStore();
 
   const {
     register,
@@ -56,24 +59,36 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
         password: data.password,
       };
 
-      await registerUser(registerData);
+      // Guardar los datos preparados para usar en el modal
+      setPreparedData(registerData);
 
-      console.log('Registro exitoso');
-
-      // Mostrar el modal después de enviar el formulario
+      // Mostrar el modal de confirmación
       setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error en preparación de datos:', error);
+      setError(
+        error instanceof Error ? error.message : 'Error al preparar los datos'
+      );
+    }
+  };
+
+  const handleModalOk = async () => {
+    try {
+      setIsModalOpen(false);
+      
+      // Ahora sí enviar los datos al servidor
+      await registerUser(preparedData);
+      
+      console.log('Registro exitoso');
+      
+      // Redirigir al login después del registro exitoso
+      onShowLogin();
     } catch (error) {
       console.error('Error en registro:', error);
       setError(
         error instanceof Error ? error.message : 'Error al registrar usuario'
       );
     }
-  };
-
-  const handleModalOk = () => {
-    setIsModalOpen(false);
-    // Aquí puedes agregar lógica para continuar al siguiente paso
-    console.log('Aceptar confirmación de teléfono');
   };
 
   const handleModalCancel = () => {
@@ -83,6 +98,9 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
   // Obtener los datos del formulario para mostrar en el modal
   const phoneNumber = watch('phoneNumber');
   const fullPhoneNumber = `${countryCode} ${phoneNumber || '7777 7777'}`;
+  const userName = watch('name');
+  const userLastname = watch('lastname');
+  const userEmail = watch('email');
 
   const handleGoBack = () => {
     onShowLogin();
@@ -270,7 +288,11 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
           />
         </div>
 
-        <Button type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
+        <Button
+          type='submit'
+          isLoading={isSubmitting || isLoading}
+          className='w-full'
+        >
           Siguiente
         </Button>
 
@@ -281,14 +303,14 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
         )}
       </form>
 
-      {/* Modal de Ant Design */}
+      {/* Modal de confirmación */}
       <Modal
         title={null}
         open={isModalOpen}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
-        okText='Aceptar'
-        cancelText='Cancelar'
+        okText='Confirmar registro'
+        cancelText='Revisar datos'
         centered
         width={400}
         closable={false}
@@ -312,24 +334,43 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
         }}
       >
         <div className='flex flex-col items-center text-center py-6'>
-          {/* Ícono de advertencia */}
-          <div className='w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6'>
-            <div className='w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center'>
-              <span className='text-white font-bold text-lg'>!</span>
+          {/* Ícono de verificación */}
+          <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6'>
+            <div className='w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center'>
+              <span className='text-white font-bold text-lg'>✓</span>
             </div>
           </div>
 
           {/* Título */}
           <h2 className='text-xl text-gray-900 mb-4 font-mona-sans'>
-            Confirmar número <span className='font-bold'>de teléfono</span>
+            Confirmar <span className='font-bold'>registro</span>
           </h2>
 
+          {/* Información del usuario */}
+          <div className='w-full text-left space-y-3 mb-6'>
+            <div className='flex justify-between items-center py-2 border-b border-gray-100'>
+              <span className='text-gray-600 font-mona-sans'>Nombre:</span>
+              <span className='text-gray-900 font-semibold font-mona-sans'>
+                {userName} {userLastname}
+              </span>
+            </div>
+            <div className='flex justify-between items-center py-2 border-b border-gray-100'>
+              <span className='text-gray-600 font-mona-sans'>Email:</span>
+              <span className='text-gray-900 font-semibold font-mona-sans'>
+                {userEmail}
+              </span>
+            </div>
+            <div className='flex justify-between items-center py-2 border-b border-gray-100'>
+              <span className='text-gray-600 font-mona-sans'>Teléfono:</span>
+              <span className='text-gray-900 font-semibold font-mona-sans'>
+                {fullPhoneNumber}
+              </span>
+            </div>
+          </div>
+
           {/* Mensaje */}
-          <p className='text-gray-600 text-base mb-6 font-mona-sans'>
-            Está seguro de que desea continuar con el número{' '}
-            <span className='font-semibold text-gray-900'>
-              {fullPhoneNumber}?
-            </span>
+          <p className='text-gray-600 text-base font-mona-sans'>
+            ¿Los datos son correctos? Revisa especialmente tu número de teléfono.
           </p>
         </div>
       </Modal>

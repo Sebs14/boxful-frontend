@@ -1,5 +1,10 @@
 import { apiRequest } from './api';
-import type { LoginCredentials, RegisterData, AuthResponse, UserProfile } from './types';
+import type {
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+  UserProfile,
+} from './types';
 
 // Authentication API functions
 export const authAPI = {

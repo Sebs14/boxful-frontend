@@ -2,9 +2,10 @@
 
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Input from './ui/Input';
 import Button from './ui/Button';
-import { useAuth } from '../../utils/auth-context';
+import { useAuthStore } from '../stores/authStore';
 import type { LoginFormData } from '../../utils/types';
 
 interface LoginFormProps {
@@ -13,7 +14,8 @@ interface LoginFormProps {
 
 export default function LoginForm({ onShowRegister }: LoginFormProps) {
   const [error, setError] = useState<string>('');
-  const { login, isLoading } = useAuth();
+  const router = useRouter();
+  const { login, isLoading } = useAuthStore();
 
   const {
     register,
@@ -30,12 +32,13 @@ export default function LoginForm({ onShowRegister }: LoginFormProps) {
 
       console.log('Login exitoso');
 
-      // Aquí puedes redirigir al usuario
-      // router.push('/dashboard');
-
+      // Redirigir al Dashboard después del login exitoso
+      router.push('/Dashboard');
     } catch (error) {
       console.error('Error en login:', error);
-      setError(error instanceof Error ? error.message : 'Error al iniciar sesión');
+      setError(
+        error instanceof Error ? error.message : 'Error al iniciar sesión'
+      );
     }
   };
 
@@ -88,7 +91,11 @@ export default function LoginForm({ onShowRegister }: LoginFormProps) {
           </div>
         )}
 
-        <Button type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
+        <Button
+          type='submit'
+          isLoading={isSubmitting || isLoading}
+          className='w-full'
+        >
           Iniciar sesión
         </Button>
       </form>

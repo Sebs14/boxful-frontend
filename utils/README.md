@@ -168,7 +168,55 @@
  */
 
 ////////////////////////////////////////////////////////////////////////////////
-// 7. NOTAS IMPORTANTES
+// 6. CONFIGURACIÓN DE CORS
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * CORS (Cross-Origin Resource Sharing) está configurado para permitir requests
+ * desde el frontend al backend.
+ *
+ * Orígenes permitidos:
+ * - http://localhost:3000 (Backend)
+ * - http://localhost:3001 (Frontend típico)
+ * - http://localhost:3002 (Frontend alternativo)
+ * - http://127.0.0.1:3000
+ * - http://127.0.0.1:3001
+ * - http://127.0.0.1:3002
+ *
+ * Headers permitidos:
+ * - Content-Type
+ * - Authorization
+ * - Accept
+ * - Origin
+ * - X-Requested-With
+ * - Access-Control-Request-Method
+ * - Access-Control-Request-Headers
+ *
+ * Para probar CORS:
+ * GET /test-cors - Endpoint de prueba
+ */
+
+////////////////////////////////////////////////////////////////////////////////
+// 7. DEPURACIÓN DE CORS
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Si tienes problemas con CORS:
+ *
+ * 1. Verifica que el backend esté corriendo en el puerto correcto (3000)
+ * 2. Verifica que el frontend esté apuntando a la URL correcta
+ * 3. Revisa la consola del navegador para errores de CORS
+ * 4. Usa el componente CorsTest para verificar la conectividad
+ * 5. Verifica que no haya firewalls bloqueando las conexiones
+ *
+ * Comandos útiles:
+ * - Backend: yarn start:dev
+ * - Frontend: yarn dev
+ * - Test CORS: GET http://localhost:3000/test-cors
+ */
+
+////////////////////////////////////////////////////////////////////////////////
+// 8. NOTAS IMPORTANTES
 ////////////////////////////////////////////////////////////////////////////////
 
 /**

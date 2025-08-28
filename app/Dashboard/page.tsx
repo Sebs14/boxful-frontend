@@ -5,21 +5,19 @@ import { useRouter } from 'next/navigation';
 import DashboardLayout from '../components/Dashboard/DashboardLayout';
 import CreateOrderContent from '../components/Dashboard/CreateOrderContent';
 import HistorialContent from '../components/Dashboard/HistorialContent';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useUserPreferencesStore } from '../stores';
+import { useAuthStore } from '../stores/authStore';
 
 const DashboardPage = () => {
   const router = useRouter();
-  
+
   // Usar el store de preferencias del usuario
   const { activeTab } = useUserPreferencesStore();
+  const { logout } = useAuthStore();
 
   const handleLogout = () => {
-    // Aquí puedes agregar la lógica de logout que necesites
-    // Por ejemplo: limpiar localStorage, cookies, etc.
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData');
-    
-    // Redirigir a la página de login
+    logout();
     router.push('/');
   };
 
@@ -46,12 +44,11 @@ const DashboardPage = () => {
   };
 
   return (
-    <DashboardLayout
-      title={getTitle()}
-      onLogout={handleLogout}
-    >
-      {renderContent()}
-    </DashboardLayout>
+    <ProtectedRoute>
+      <DashboardLayout title={getTitle()} onLogout={handleLogout}>
+        {renderContent()}
+      </DashboardLayout>
+    </ProtectedRoute>
   );
 };
 

@@ -23,38 +23,54 @@ export default function UserProfile() {
 
   return (
     <div className='max-w-md mx-auto bg-white rounded-lg shadow-md p-6'>
-      <h2 className='text-2xl font-bold text-gray-900 mb-6'>Perfil de Usuario</h2>
+      <h2 className='text-2xl font-bold text-gray-900 mb-6'>
+        Perfil de Usuario
+      </h2>
 
       <div className='space-y-4'>
         <div>
-          <label className='block text-sm font-medium text-gray-700'>Nombre</label>
-          <p className='mt-1 text-gray-900'>{user.name} {user.lastname}</p>
+          <label className='block text-sm font-medium text-gray-700'>
+            Nombre
+          </label>
+          <p className='mt-1 text-gray-900'>
+            {user.name} {user.lastname}
+          </p>
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700'>Email</label>
+          <label className='block text-sm font-medium text-gray-700'>
+            Email
+          </label>
           <p className='mt-1 text-gray-900'>{user.email}</p>
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700'>Género</label>
+          <label className='block text-sm font-medium text-gray-700'>
+            Género
+          </label>
           <p className='mt-1 text-gray-900'>{user.gender}</p>
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700'>Fecha de Nacimiento</label>
+          <label className='block text-sm font-medium text-gray-700'>
+            Fecha de Nacimiento
+          </label>
           <p className='mt-1 text-gray-900'>
             {new Date(user.dateOfBirth).toLocaleDateString('es-ES')}
           </p>
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700'>Teléfono</label>
+          <label className='block text-sm font-medium text-gray-700'>
+            Teléfono
+          </label>
           <p className='mt-1 text-gray-900'>{user.phone}</p>
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700'>ID de Usuario</label>
+          <label className='block text-sm font-medium text-gray-700'>
+            ID de Usuario
+          </label>
           <p className='mt-1 text-gray-900 text-sm font-mono'>{user._id}</p>
         </div>
       </div>
