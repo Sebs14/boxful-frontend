@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { useUserPreferencesStore } from '../../stores';
+import { useAuthStore } from '../../stores/authStore';
 import { useClientOnly } from '../../hooks/useClientOnly';
 
 interface DashboardLayoutProps {
@@ -18,14 +19,26 @@ export default function DashboardLayout({
   onLogout,
 }: DashboardLayoutProps) {
   const hasMounted = useClientOnly();
-  
+
   // Usar el store de preferencias del usuario
-  const {
-    isSidebarCollapsed,
-    activeTab,
-    toggleSidebar,
-    setActiveTab,
-  } = useUserPreferencesStore();
+  const { isSidebarCollapsed, activeTab, toggleSidebar, setActiveTab } =
+    useUserPreferencesStore();
+
+  // Obtener información del usuario autenticado
+  const { user } = useAuthStore();
+
+  // Calcular iniciales del usuario
+  const getUserInitials = (user: any) => {
+    if (!user || !user.name) return 'U';
+    const firstName = user.name.charAt(0).toUpperCase();
+    const lastName = user.lastname ? user.lastname.charAt(0).toUpperCase() : '';
+    return firstName + lastName;
+  };
+
+  const userInitials = user ? getUserInitials(user) : 'U';
+  const userName = user
+    ? `${user.name} ${user.lastname || ''}`.trim()
+    : 'Usuario';
 
   // Mostrar un fallback hasta que se monte en el cliente
   if (!hasMounted) {
@@ -64,7 +77,12 @@ export default function DashboardLayout({
             transition: 'left 0.3s ease-in-out',
           }}
         >
-          <Header title={title} onToggleSidebar={toggleSidebar} />
+          <Header
+            title={title}
+            onToggleSidebar={toggleSidebar}
+            userName={userName}
+            userInitials={userInitials}
+          />
         </div>
 
         {/* Content */}

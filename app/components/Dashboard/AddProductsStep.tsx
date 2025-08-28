@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { IoAdd, IoTrash, IoChevronBack } from 'react-icons/io5';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -165,7 +166,7 @@ export default function AddProductsStep({
               {/* Package Icon */}
               <div className='col-span-1 flex items-center justify-center'>
                 <div className='w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center'>
-                  <img src='/Icono.svg' alt='Package' className='w-6 h-6' />
+                  <Image width={24} height={24} src='/Icono.svg' alt='Package' className='w-6 h-6' />
                 </div>
               </div>
 
@@ -321,7 +322,7 @@ export default function AddProductsStep({
                   {/* Package Icon */}
                   <div className='col-span-1 flex items-center justify-center'>
                     <div className='w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center'>
-                      <img src='/Icono.svg' alt='Package' className='w-6 h-6' />
+                      <Image height={24} width={24} src='/Icono.svg' alt='Package' className='w-6 h-6' />
                     </div>
                   </div>
 

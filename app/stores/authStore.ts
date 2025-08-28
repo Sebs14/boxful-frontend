@@ -11,6 +11,7 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isRehydrating: boolean; // Nuevo estado para saber si se está rehidratando
 
   // Acciones
   setUser: (user: UserProfile | null) => void;
@@ -20,6 +21,8 @@ interface AuthState {
   register: (userData: any) => Promise<void>;
   logout: () => void;
   updateUser: (user: Partial<UserProfile>) => void;
+  initializeAuth: () => Promise<void>;
+  setRehydrating: (rehydrating: boolean) => void; // Nueva acción
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -30,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isLoading: false,
       isAuthenticated: false,
+      isRehydrating: true, // Inicia en true para esperar la rehidratación
 
       // Acciones
       setUser: (user) =>
@@ -46,8 +50,10 @@ export const useAuthStore = create<AuthState>()(
 
       setLoading: (loading) => set({ isLoading: loading }),
 
+      setRehydrating: (isRehydrating) => set({ isRehydrating }),
+
       login: async (email: string, password: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true, isRehydrating: false });
         try {
           const response = await authAPI.login({ email, password });
           const token = response.access_token;
@@ -60,9 +66,10 @@ export const useAuthStore = create<AuthState>()(
             token,
             isAuthenticated: true,
             isLoading: false,
+            isRehydrating: false,
           });
         } catch (error) {
-          set({ isLoading: false });
+          set({ isLoading: false, isRehydrating: false });
           throw error;
         }
       },
@@ -84,12 +91,50 @@ export const useAuthStore = create<AuthState>()(
           token: null,
           isAuthenticated: false,
           isLoading: false,
+          isRehydrating: false,
         }),
 
       updateUser: (userData) =>
         set((state) => ({
           user: state.user ? { ...state.user, ...userData } : null,
         })),
+
+      initializeAuth: async () => {
+        const state = get();
+
+        // Si ya hay un usuario cargado, no hacer nada
+        if (state.user && state.token) {
+          set({ isRehydrating: false });
+          return;
+        }
+
+        // Si hay un token guardado, intentar obtener el perfil
+        if (state.token) {
+          try {
+            set({ isLoading: true });
+            const user = await authAPI.getProfile(state.token);
+
+            set({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              isRehydrating: false,
+            });
+          } catch (error) {
+            // Token expirado o inválido, limpiar estado
+            console.log('Token expirado, limpiando autenticación');
+            set({
+              user: null,
+              token: null,
+              isAuthenticated: false,
+              isLoading: false,
+              isRehydrating: false,
+            });
+          }
+        } else {
+          set({ isRehydrating: false });
+        }
+      },
     }),
     {
       name: 'auth-storage',
@@ -97,7 +142,27 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated,
+        isRehydrating: state.isRehydrating,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Esta función se ejecuta después de que se restaura el estado desde localStorage
+        if (state) {
+          state.isRehydrating = false; // Marcar que terminó la rehidratación
+          
+          if (state.token && !state.user) {
+            // Si hay token pero no hay usuario, intentar obtener el perfil
+            authAPI.getProfile(state.token).then((user) => {
+              state.user = user;
+              state.isAuthenticated = true;
+            }).catch(() => {
+              // Token inválido, limpiar estado
+              state.user = null;
+              state.token = null;
+              state.isAuthenticated = false;
+            });
+          }
+        }
+      },
     }
   )
 );

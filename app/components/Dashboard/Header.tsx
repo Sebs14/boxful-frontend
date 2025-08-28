@@ -6,9 +6,30 @@ import { IoNotifications, IoSearch, IoMenu } from 'react-icons/io5';
 interface HeaderProps {
   title: string;
   onToggleSidebar: () => void;
+  userName?: string;
+  userInitials?: string;
 }
 
-export default function Header({ title, onToggleSidebar }: HeaderProps) {
+export default function Header({
+  title,
+  onToggleSidebar,
+  userName,
+  userInitials,
+}: HeaderProps) {
+  // Función para obtener iniciales por defecto si no se proporcionan
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase())
+      .join('')
+      .slice(0, 2);
+  };
+
+  const displayInitials =
+    userInitials || (userName ? getInitials(userName) : 'U');
+  const displayName = userName || 'Usuario';
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -37,11 +58,13 @@ export default function Header({ title, onToggleSidebar }: HeaderProps) {
             className='flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer'
           >
             <div className='w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center'>
-              <span className='text-white text-sm font-semibold'>TN</span>
+              <span className='text-white text-sm font-semibold'>
+                {displayInitials}
+              </span>
             </div>
             <div className='hidden sm:block'>
               <p className='text-sm font-medium text-gray-900 font-mona-sans whitespace-nowrap'>
-                {'{Tunombre}'}
+                {displayName}
               </p>
             </div>
           </motion.div>
