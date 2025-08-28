@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '@ant-design/v5-patch-for-react-19';
 import './globals.css';
+import { AuthProvider } from '../utils/auth-context';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -26,7 +27,9 @@ export default function RootLayout({
         />
       </head>
       <body className='antialiased bg-[#F8F9FA] font-mona-sans'>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

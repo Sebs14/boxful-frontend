@@ -1,19 +1,20 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import Input from './ui/Input';
 import Button from './ui/Button';
-
-interface LoginFormData {
-  email: string;
-  password: string;
-}
+import { useAuth } from '../../utils/auth-context';
+import type { LoginFormData } from '../../utils/types';
 
 interface LoginFormProps {
   onShowRegister: () => void;
 }
 
 export default function LoginForm({ onShowRegister }: LoginFormProps) {
+  const [error, setError] = useState<string>('');
+  const { login, isLoading } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -22,11 +23,19 @@ export default function LoginForm({ onShowRegister }: LoginFormProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      setError('');
       console.log('Login data:', data);
-      // Aquí irá la lógica de autenticación
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simular API call
+
+      await login(data.email, data.password);
+
+      console.log('Login exitoso');
+
+      // Aquí puedes redirigir al usuario
+      // router.push('/dashboard');
+
     } catch (error) {
       console.error('Error en login:', error);
+      setError(error instanceof Error ? error.message : 'Error al iniciar sesión');
     }
   };
 
@@ -73,7 +82,13 @@ export default function LoginForm({ onShowRegister }: LoginFormProps) {
           })}
         />
 
-        <Button type='submit' isLoading={isSubmitting} className='w-full'>
+        {error && (
+          <div className='w-full p-3 bg-red-50 border border-red-200 rounded-md'>
+            <p className='text-red-600 text-sm font-mona-sans'>{error}</p>
+          </div>
+        )}
+
+        <Button type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
           Iniciar sesión
         </Button>
       </form>

@@ -9,18 +9,9 @@ import Select from './ui/Select';
 import DatePicker from './ui/DatePicker';
 import PhoneInput from './ui/PhoneInput';
 import { ChevronLeftIcon } from './ui/Icons';
-
-interface RegisterFormData {
-  name: string;
-  lastname: string;
-  gender: string;
-  birthDate: string;
-  email: string;
-  countryCode: string;
-  phoneNumber: string;
-  password: string;
-  confirmPassword: string;
-}
+import { useAuth } from '../../utils/auth-context';
+import type { RegisterFormData } from '../../utils/types';
+import { GENDER_OPTIONS } from '../../utils/types';
 
 interface RegisterFormProps {
   onShowLogin: () => void;
@@ -30,6 +21,8 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
   const [countryCode, setCountryCode] = useState('+503');
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState<string>('');
+  const { register: registerUser, isLoading } = useAuth();
 
   const {
     register,
@@ -49,13 +42,31 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
+      setError('');
       console.log('Register data:', data);
+
+      // Preparar los datos para la API
+      const registerData = {
+        email: data.email,
+        name: data.name,
+        lastname: data.lastname,
+        gender: data.gender,
+        dateOfBirth: data.birthDate,
+        phone: `${data.countryCode}${data.phoneNumber}`,
+        password: data.password,
+      };
+
+      await registerUser(registerData);
+
+      console.log('Registro exitoso');
+
       // Mostrar el modal después de enviar el formulario
       setIsModalOpen(true);
-      // Aquí irá la lógica de registro
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simular API call
     } catch (error) {
       console.error('Error en registro:', error);
+      setError(
+        error instanceof Error ? error.message : 'Error al registrar usuario'
+      );
     }
   };
 
@@ -160,12 +171,10 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
             label='Sexo'
             placeholder='Seleccionar'
             error={errors.gender?.message}
-            options={[
-              { value: 'masculino', label: 'Masculino' },
-              { value: 'femenino', label: 'Femenino' },
-              { value: 'otro', label: 'Otro' },
-              { value: 'prefiero_no_decir', label: 'Prefiero no decir' },
-            ]}
+            options={GENDER_OPTIONS.map((option) => ({
+              value: option.value,
+              label: option.label,
+            }))}
             {...register('gender', {
               required: 'El sexo es requerido',
             })}
@@ -261,9 +270,15 @@ export default function RegisterForm({ onShowLogin }: RegisterFormProps) {
           />
         </div>
 
-        <Button type='submit' isLoading={isSubmitting} className='w-full'>
+        <Button type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
           Siguiente
         </Button>
+
+        {error && (
+          <div className='w-full p-3 bg-red-50 border border-red-200 rounded-md'>
+            <p className='text-red-600 text-sm font-mona-sans'>{error}</p>
+          </div>
+        )}
       </form>
 
       {/* Modal de Ant Design */}
